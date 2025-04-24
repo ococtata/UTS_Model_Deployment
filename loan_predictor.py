@@ -15,11 +15,9 @@ class LoanPredictor:
         self.hierarchal_col = None
     
     def load_model(self, model_path='best_model.pkl', preprocessing_path='preprocessing_objects.pkl'):
-        # Load model
         with open(model_path, 'rb') as file:
             self.model = pickle.load(file)
         
-        # Load preprocessing objects
         with open(preprocessing_path, 'rb') as file:
             preprocessing_objects = pickle.load(file)
             
@@ -30,23 +28,17 @@ class LoanPredictor:
         self.categorical_cols = preprocessing_objects['categorical_cols']
         self.non_hierarchal_cat = preprocessing_objects['non_hierarchal_cat']
         self.hierarchal_col = preprocessing_objects['hierarchal_col']
-        
-        print("Model and preprocessing objects loaded successfully!")
-    
+            
     def preprocess_data(self, data):
-        """Preprocess the input data."""
         if isinstance(data, dict):
             data = pd.DataFrame([data])
         
-        # Handle missing values
         if 'person_income' in data.columns and data['person_income'].isna().any():
             data['person_income'] = data['person_income'].fillna(data['person_income'].median())
         
-        # Preprocess numerical columns
         if len(self.numerical_cols) > 0:
             data[self.numerical_cols] = self.min_max_scaler.transform(data[self.numerical_cols])
         
-        # Preprocess categorical columns
         if len(self.non_hierarchal_cat) > 0:
             cat_encoded = self.oh_encoder.transform(data[self.non_hierarchal_cat])
             cat_encoded_df = pd.DataFrame(

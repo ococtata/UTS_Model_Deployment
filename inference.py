@@ -5,17 +5,13 @@ def predict_loan_status(data):
     predictor = LoanPredictor()
     predictor.load_model()
     
-    # Clean and preprocess
     if isinstance(data, dict):
         data = pd.DataFrame([data])
     
-    # Clean gender data
     data = predictor.clean_gender(data)
     
-    # Handle outliers
     data = predictor.handle_outliers(data)
     
-    # Make predictions
     predictions = predictor.predict(data)
     probabilities = predictor.predict_proba(data)
     
